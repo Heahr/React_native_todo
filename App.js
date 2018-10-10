@@ -1,20 +1,55 @@
 import React from 'react';
-import { StyleSheet, Text, View, StatusBar, TextInput, Dimensions, Platform } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, TextInput, Dimensions, Platform, ScrollView} from 'react-native';
+import { AppLoading } from "expo";
+import Todo from "./Todo";
 
 const { height, width } = Dimensions.get("window");
 
 export default class App extends React.Component {
+  state = {
+    newToDo: "",
+    loadedTodos: false
+  };
+  componentDidMount = () => {
+    this._loadTodos();
+  }
   render() {
+    const { newToDo, loadedTodos } = this.state;
+    if(!loadedTodos) {
+      return <AppLoading />
+    }
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-context" />
         <Text style={styles.title}>To Do</Text>
         <View style={styles.card}>
-          <TextInput style={styles.input} placeholder={"New To Do"} />
+          <TextInput 
+            style={styles.input} 
+            placeholder={"New To Do"} 
+            value={newToDo} 
+            onChangeText={this._crontollNewToDo} 
+            returnKeyType={"done"} 
+            autoCorrect={false}
+          />
+          <ScrollView contentContainerStyle={styles.Todos}>
+            <Todo text={"Hi"}/>
+          </ScrollView>
         </View>
       </View>
     );
   }
+  
+  _loadTodos = () => {
+    this.setState({
+      loadedTodos: true
+    })
+  };
+}
+
+_crontollNewToDo = text => {
+  this.setState({
+    newToDo: text
+  })
 }
 
 const styles = StyleSheet.create({
@@ -50,5 +85,14 @@ const styles = StyleSheet.create({
         elevatopm: 3,
       }
     })
+  },
+  input: {
+    padding: 20,
+    borderBottomColor: "#bbb",
+    borderBottomWidth: 1,
+    fontSize: 15,
+  },
+  Todos: {
+    alignItems: "center"
   },
 });
