@@ -90,8 +90,8 @@ const styles = StyleSheet.create({
         width: width - 80,
         borderBottomColor: "#bbb",
         borderBottomWidth: StyleSheet.hairlineWidth,
-        flexDirection: "row",
         alignItems: "center",
+        flexDirection: "row",
         justifyContent: "space-between"
     },
     circle: {
