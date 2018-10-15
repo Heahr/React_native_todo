@@ -1,57 +1,65 @@
-import React, {Component} from "react"
-import {View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput} from "react-native"
+import React, { Component } from "react"
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TextInput } from "react-native"
+import PropTypes from "prop-types";
 
-const {width,height} = Dimensions.get("window");
+const { width,height } = Dimensions.get( "window" );
 
 export default class Todo extends Component{
-    state = {
-        isEditing: false,
-        isCompleted: false,
-        TodoValue: ""
-    };
+    constructor( props ) {
+        super( props );
+        this.state = {
+            isEditing: false,
+            TodoValue: props.text
+        };
+    }
+    static propTypes = {
+        text: PropTypes.string.isRequired,
+        isCompleted: PropTypes.bool.isRequired
+    }
+    /* deleteTodo: PropsTypes.func.isRequired */
     render() {
-        const {isCompleted, isEditing, TodoValue} = this.state;
-        const {text} = this.props;
+        const { isEditing, TodoValue } = this.state;
+        const { text, id, deleteTodo, isCompleted } = this.props;
         return (
-            <View style={styles.container}>
-                <View style={styles.column}>
-                    <TouchableOpacity onPress={this._toggleComplete}>
-                        <View style={[styles.circle, isCompleted ? styles.completedCircle : styles.uncompletedCircle]}></View>
+            <View style={ styles.container }>
+                <View style={ styles.column }>
+                    <TouchableOpacity onPress={ this._toggleComplete }>
+                        <View style={ [styles.circle, isCompleted ? styles.completedCircle : styles.uncompletedCircle] }></View>
                     </TouchableOpacity>
                     
                     {isEditing ? (
                         <TextInput 
-                            style={[styles.text, styles.input, isCompleted ? styles.completedText : styles.uncompletedText]} 
-                            value={TodoValue} 
-                            multiline={true} 
-                            onChangeText={this._controllInput} 
-                            returnKeyType={"done"} 
-                            onBlur={this._finishEditing} 
+                            style={ [styles.text, styles.input, isCompleted ? styles.completedText : styles.uncompletedText] } 
+                            value={ TodoValue } 
+                            multiline={ true } 
+                            onChangeText={ this._controllInput } 
+                            returnKeyType={ "done" } 
+                            onBlur={ this._finishEditing } 
                         />
                     ) : (
-                        <Text style={[styles.text, isCompleted ? styles.completedText : styles.uncompletedText]}>
-                            {text}
+                        <Text style={[styles.text, isCompleted ? styles.completedText : styles.uncompletedText] }>
+                            { text }
                         </Text>
-                    )}
+                    ) }
                 </View>
-                {isEditing ? (
-                    <View style={styles.actions}>
-                        <TouchableOpacity onPressOut={this._finishEditing}>
-                            <View style={styles.actionContainer}>
-                                <Text style={styles.actionText}>✓</Text>
+                { isEditing ? (
+                    <View style={ styles.actions }>
+                        <TouchableOpacity onPressOut={ this._finishEditing }>
+                            <View style={ styles.actionContainer }>
+                                <Text style={ styles.actionText }>✓</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
                 ) : (
-                    <View style={styles.actions}>
-                        <TouchableOpacity onPressOut={this._startEditing}>
-                            <View style={styles.actionContainer}>
-                                <Text style={styles.actionText}>✎</Text>
+                    <View style={ styles.actions }>
+                        <TouchableOpacity onPressOut={ this._startEditing }>
+                            <View style={ styles.actionContainer }>
+                                <Text style={ styles.actionText }>✎</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <View style={styles.actionContainer}>
-                                <Text style={styles.actionText}>✖︎</Text>
+                        <TouchableOpacity onPressOut={ () => deleteTodo(id) } >
+                            <View style={ styles.actionContainer } >
+                                <Text style={ styles.actionText }>✖︎</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -60,20 +68,23 @@ export default class Todo extends Component{
         )
     }
     _toggleComplete = () => {
-        this.setState(prevState => {
-            return {
-                isCompleted: !prevState.isCompleted
-            }
-        })
+        const { isCompleted, uncompleteTodo, completeTodo, id } = this.props;
+        if ( isCompleted ) {
+            uncompleteTodo(id);
+        }
+        else {
+            completeTodo(id);
+        }
     }
     _startEditing = () => {
-        const {text} = this.props;
         this.setState({
-            isEditing: true,
-            TodoValue: text
+            isEditing: true
         })
     }
     _finishEditing = () => {
+        const { TodoValue } = this.state;
+        const { id, updateTodo } = this.props;
+        updateTodo(id, TodoValue);
         this.setState({
             isEditing: false
         })
