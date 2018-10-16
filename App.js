@@ -32,7 +32,7 @@ export default class App extends React.Component {
             value={ newToDo } 
             onChangeText={ this._crontollNewToDo } 
             returnKeyType={ "done" } 
-            autoCorrect={ false}
+            autoCorrect={ false }
             onSubmitEditing={ this._addTodos }
           />
           <ScrollView contentContainerStyle={ styles.Todos }>
